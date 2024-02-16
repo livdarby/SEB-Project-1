@@ -7,5 +7,28 @@
     <link rel="stylesheet" href="./styles/main.css" />
     <script defer src="./scripts/app.js"></script>
   </head>
-  <body></body>
+  <body>
+    <h1>Minesweeper Game</h1>
+    <div class="navigation-container">
+      <div class="difficulty-level">
+        <select name="difficult" id="difficulty">
+          <option value="easy">Easy</option>
+          <option value="intermediate">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+
+      <div class="flags">
+        🚩
+        <span id="flags">0</span>
+      </div>
+
+      <div class="timer">⏱<span id="timer">000</span></div>
+
+      <div class="highscore">🏆<span id="highscore">0</span></div>
+    </div>
+    <div class="grid-wrapper">
+      <div class="grid"></div>
+    </div>
+  </body>
 </html>
