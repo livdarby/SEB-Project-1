@@ -7,6 +7,9 @@ let clockisRunning = false;
 let numberOfFlags = 10;
 let firstMoveIndex = null;
 let mineLocations = [];
+let borderingIndexes = null;
+let borderingCellsContainingMines = null;
+let playerClickIndex = null;
 
 const flagDisplay = document.getElementById("flags");
 flagDisplay.innerHTML = numberOfFlags;
@@ -44,7 +47,7 @@ function startTimer(event) {
   if (clockisRunning === false) {
     setInterval(updateTimer, 1000);
     clockisRunning = true;
-    firstMoveIndex = Number(event.target.textContent);
+    firstMoveIndex = cells.indexOf(event.target);
     mineDistribution();
   }
 }
@@ -62,7 +65,7 @@ function mineDistribution() {
       ? mineDistribution()
       : mineLocations.push(cells[num]);
   }
-  mineLocations.forEach((cell) => cell.classList.add("mine"));
+  mineLocations.map((cell) => cell.classList.add("mine"));
 }
 
 // Set rules for the remaining tiles
@@ -75,27 +78,114 @@ function mineDistribution() {
 // if cells i-9, i-8, i-7, i-1, i+1, i+7, i+8, i+9 contain class "mines"
 // display the number that contain class "mines"
 
-function numberDisplay(event) {
-  let playerClickIndex = cells.indexOf(event.target);
-  console.log(playerClickIndex);
-  let borderingCells = [
-    cells[playerClickIndex - 1],
-    cells[playerClickIndex + 1],
-    cells[playerClickIndex + (width - 1)],
-    cells[playerClickIndex + width],
-    cells[playerClickIndex + (width + 1)],
-    cells[playerClickIndex - (width - 1)],
-    cells[playerClickIndex - width],
-    cells[playerClickIndex - (width + 1)],
-  ];
-  let borderingCellsContainingMines = borderingCells.filter((cell) =>
-    cell.classList.contains("mine")
-  );
+function numberDisplay() {
+  borderingCellsContainingMines = borderingIndexes
+    .filter((index) => index >= 0 && index < cells.length)
+    .map((index) => cells[index])
+    .filter((cell) => cell.classList.contains("mine"));
   cells[playerClickIndex].innerText = borderingCellsContainingMines.length;
-  console.log(borderingCellsContainingMines);
 }
-
-cells.forEach((cell) => cell.addEventListener("click", numberDisplay));
 
 // bugs to fix - correctly count bordering mines on fringe cells
 // add larger numbers
+
+function blowUp(event) {
+  event.target.classList.add("uncovered");
+}
+
+function numberofBorderingMines(event) {
+  playerClickIndex = cells.indexOf(event.target);
+  if (event.target.classList.contains("mine")) {
+    blowUp(event);
+  } else if (cells.indexOf(event.target) === 0) {
+    console.log(playerClickIndex);
+    borderingIndexes = [
+      playerClickIndex + 1,
+      playerClickIndex + width,
+      playerClickIndex + width + 1,
+    ];
+    numberDisplay();
+  } else if (cells.indexOf(event.target) === width - 1) {
+    console.log(playerClickIndex);
+    borderingIndexes = [
+      playerClickIndex - 1,
+      playerClickIndex + width,
+      playerClickIndex + width - 1,
+    ];
+    numberDisplay();
+  } else if (cells.indexOf(event.target) === cellCount - width) {
+    console.log(playerClickIndex);
+    borderingIndexes = [
+      playerClickIndex + 1,
+      playerClickIndex - width,
+      playerClickIndex - width + 1,
+    ];
+    numberDisplay();
+  } else if (cells.indexOf(event.target) === cellCount - 1) {
+    console.log(playerClickIndex);
+    borderingIndexes = [
+      playerClickIndex - 1,
+      playerClickIndex - width,
+      playerClickIndex - width - 1,
+    ];
+    numberDisplay();
+  } else if (cells.indexOf(event.target) < width) {
+    console.log(playerClickIndex);
+    borderingIndexes = [
+      playerClickIndex - 1,
+      playerClickIndex + 1,
+      playerClickIndex + width - 1,
+      playerClickIndex + width,
+      playerClickIndex + width + 1,
+    ];
+    numberDisplay();
+  } else if (cells.indexOf(event.target) > cellCount - width - 1) {
+    console.log(playerClickIndex);
+    borderingIndexes = [
+      playerClickIndex - 1,
+      playerClickIndex + 1,
+      playerClickIndex - width - 1,
+      playerClickIndex - width,
+      playerClickIndex - width + 1,
+    ];
+    numberDisplay();
+  } else if (cells.indexOf(event.target) % 8 === 0) {
+    console.log(playerClickIndex);
+    borderingIndexes = [
+      playerClickIndex + 1,
+      playerClickIndex + width,
+      playerClickIndex + width + 1,
+      playerClickIndex - width,
+      playerClickIndex - width + 1,
+    ];
+    numberDisplay();
+  } else if (cells.indexOf(event.target) % 8 === 7) {
+    console.log(playerClickIndex);
+    borderingIndexes = [
+      playerClickIndex - 1,
+      playerClickIndex + width - 1,
+      playerClickIndex + width,
+      playerClickIndex - width - 1,
+      playerClickIndex - width,
+    ];
+    numberDisplay();
+  } else {
+    console.log(playerClickIndex);
+    borderingIndexes = [
+      playerClickIndex - 1,
+      playerClickIndex + 1,
+      playerClickIndex + (width - 1),
+      playerClickIndex + width,
+      playerClickIndex + (width + 1),
+      playerClickIndex - (width - 1),
+      playerClickIndex - width,
+      playerClickIndex - (width + 1),
+    ];
+    numberDisplay();
+  }
+}
+
+cells.forEach((cell) => cell.addEventListener("click", numberofBorderingMines));
+
+// if a user right clicks, they can place a flag in a cell
+// this decreases the total number of flags in the navigation bar
