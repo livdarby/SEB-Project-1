@@ -61,5 +61,49 @@ h1 {
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  background-color: rgb(0, 72, 0);
+  background-color: rgb(91, 148, 91);
+}
+
+.grid div.zero {
+  background-color: rgb(87, 123, 91);
+}
+
+.grid div.one {
+  background-color: rgb(103, 145, 108);
+  background-image: url("../assets/one.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+}
+
+.grid div.two {
+  background-color: rgb(103, 145, 108);
+  background-image: url("../assets/two.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+}
+
+.grid div.three {
+  background-color: rgb(103, 145, 108);
+  background-image: url("../assets/three.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+}
+
+.grid div.four {
+  background-color: rgb(103, 145, 108);
+  background-image: url("../assets/four.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+}
+
+.grid div.five {
+  background-color: rgb(103, 145, 108);
+  background-image: url("../assets/five.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
 }

@@ -25,10 +25,6 @@ function createGrid() {
 
 createGrid();
 
-function addFlag() {
-  cells.forEach((cell) => cell.classList.add("flag"));
-}
-
 function addMine() {
   cells.forEach((cell) => cell.classList.add("mine"));
 }
@@ -36,7 +32,8 @@ function addMine() {
 // Stop watch timer below ------------------------------------
 
 const timeDisplay = document.getElementById("timer");
-let currentTime = 0;
+let currentTime = null;
+let count = 1;
 
 function updateTimer() {
   timeDisplay.innerHTML = currentTime++;
@@ -45,8 +42,11 @@ function updateTimer() {
 // Stop watch will only start once! --------------------------
 function startTimer(event) {
   if (clockisRunning === false) {
-    setInterval(updateTimer, 1000);
-    clockisRunning = true;
+    currentTime = setInterval(() => {
+      timeDisplay.innerHTML = count;
+      count++;
+      clockisRunning = true;
+    }, 1000);
     firstMoveIndex = cells.indexOf(event.target);
     mineDistribution();
   }
@@ -61,11 +61,14 @@ cells.forEach((cell) => cell.addEventListener("click", startTimer));
 function mineDistribution() {
   while (mineLocations.length < 10) {
     let num = Math.floor(Math.random() * (cellCount - 1));
-    num === firstMoveIndex
-      ? mineDistribution()
-      : mineLocations.push(cells[num]);
+    if (num === firstMoveIndex || mineLocations.includes(cells[num])) {
+      mineDistribution();
+    } else {
+      mineLocations.push(cells[num]);
+    }
   }
   mineLocations.map((cell) => cell.classList.add("mine"));
+  console.log(mineLocations);
 }
 
 // Set rules for the remaining tiles
@@ -79,32 +82,56 @@ function mineDistribution() {
 // display the number that contain class "mines"
 
 function numberDisplay() {
+  // e.g. 1, 8, 9
+  // filter the array of index to
   borderingCellsContainingMines = borderingIndexes
-    .filter((index) => index >= 0 && index < cells.length)
-    .map((index) => cells[index])
-    .filter((cell) => cell.classList.contains("mine"));
-  cells[playerClickIndex].innerText = borderingCellsContainingMines.length;
+    // .filter((index) => index >= 0 && index < cells.length)
+    .map((index) => cells[index]) // change the indexes into the element in the cells array i.e. 1 become cells[1] = div
+    .filter((cell) => cell.classList.contains("mine")); // filter the array to contain only divs with the mine class list
+  // an array of bordering cells that do not contain mines
+  if (borderingCellsContainingMines.length === 0) {
+    cells[playerClickIndex].classList.add("zero");
+    console.log(borderingIndexes);
+    borderingIndexes.forEach((index) => {
+      const cell = cells[index];
+      if (!cell.classList.contains("checked")) {
+        cell.classList.add("checked");
+        playerClickIndex = index;
+        numberofBorderingMines({ target: cell });
+      }
+    });
+  } else if (borderingCellsContainingMines.length === 1) {
+    cells[playerClickIndex].classList.add("one");
+  } else if (borderingCellsContainingMines.length === 2) {
+    cells[playerClickIndex].classList.add("two");
+  } else if (borderingCellsContainingMines.length === 3) {
+    cells[playerClickIndex].classList.add("three");
+  } else if (borderingCellsContainingMines.length === 4) {
+    cells[playerClickIndex].classList.add("four");
+  }
+  // give the cell the class list that is equal to the number of bordering mines
+  // e.g. two bordering cells that contain mines? assign class list 'two'
 }
-
-// bugs to fix - correctly count bordering mines on fringe cells
-// add larger numbers
 
 function blowUp(event) {
   event.target.classList.add("uncovered");
 }
 
 function numberofBorderingMines(event) {
-  playerClickIndex = cells.indexOf(event.target);
+  playerClickIndex = cells.indexOf(event.target); // we click on a div, what is the index of the div in the cells array?
   if (event.target.classList.contains("mine")) {
-    blowUp(event);
+    blowUp(event); // if the div we clicked on contains a mine, reveal the mine
+    setTimeout(gameLost, 1000);
   } else if (cells.indexOf(event.target) === 0) {
+    // if the cell index = 0
     console.log(playerClickIndex);
     borderingIndexes = [
+      // make a note of the bordering cells, e.g. 1, 8, 9
       playerClickIndex + 1,
       playerClickIndex + width,
       playerClickIndex + width + 1,
     ];
-    numberDisplay();
+    numberDisplay(); // then execute the number display function
   } else if (cells.indexOf(event.target) === width - 1) {
     console.log(playerClickIndex);
     borderingIndexes = [
@@ -187,5 +214,46 @@ function numberofBorderingMines(event) {
 
 cells.forEach((cell) => cell.addEventListener("click", numberofBorderingMines));
 
-// if a user right clicks, they can place a flag in a cell
+// if a user right clicks, they can place a flag in a cell. This can also be removed, if a flag is already present.
 // this decreases the total number of flags in the navigation bar
+
+function placeFlag(event) {
+  if (clockisRunning === true) {
+    event.preventDefault();
+    if (event.target.classList.contains("flag")) {
+      numberOfFlags++;
+      flagDisplay.innerHTML = numberOfFlags;
+      event.target.classList.remove("flag");
+    } else {
+      numberOfFlags--;
+      flagDisplay.innerHTML = numberOfFlags;
+      event.target.classList.add("flag");
+    }
+  }
+}
+
+cells.forEach((cell) => cell.addEventListener("contextmenu", placeFlag));
+
+// when a player clicks on a blank cell
+// i.e. a cell which does not border any cells containing mines
+// all bording blank cells are also revealed
+
+// if a mine is uncovered, stop the game.
+
+function gameLost() {
+  if (clockisRunning === true) {
+    clearInterval(currentTime);
+    window.alert(`Game over`);
+    cells.forEach((cell) => cell.removeEventListener("click", startTimer));
+    cells.forEach((cell) =>
+      cell.removeEventListener("click", numberofBorderingMines)
+    );
+    cells.forEach((cell) => cell.removeEventListener("contextmenu", placeFlag));
+  }
+}
+
+// update the styling
+// add a reset button
+// add the win conditions
+// if each cell on the grid is interacted with without invoking the blowUp function,
+// the game is won
