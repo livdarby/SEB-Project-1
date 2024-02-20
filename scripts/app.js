@@ -25,9 +25,22 @@ function createGrid() {
 
 createGrid();
 
-function addMine() {
-  cells.forEach((cell) => cell.classList.add("mine"));
+const playAgainButton = document.querySelector(".restart");
+const gameLostPopUpContainer = document.querySelector(".lose-container");
+console.log(gameLostPopUpContainer);
+gameLostPopUpContainer.style.display = "none";
+
+const closePopUp = document.querySelector(".close-btn");
+const popUpContainer = document.querySelector(".popup-container");
+function instructions() {
+  popUpContainer.style.display = "";
+  closePopUp.addEventListener("click", function () {
+    popUpContainer.style.display = "none";
+  });
 }
+window.addEventListener("load", instructions);
+const instructionsButton = document.querySelector(".open-popup");
+instructionsButton.addEventListener("click", instructions);
 
 // Stop watch timer below ------------------------------------
 
@@ -68,7 +81,6 @@ function mineDistribution() {
     }
   }
   mineLocations.map((cell) => cell.classList.add("mine"));
-  console.log(mineLocations);
 }
 
 // Set rules for the remaining tiles
@@ -91,7 +103,6 @@ function numberDisplay() {
   // an array of bordering cells that do not contain mines
   if (borderingCellsContainingMines.length === 0) {
     cells[playerClickIndex].classList.add("zero");
-    console.log(borderingIndexes);
     borderingIndexes.forEach((index) => {
       const cell = cells[index];
       if (!cell.classList.contains("checked")) {
@@ -121,10 +132,9 @@ function numberofBorderingMines(event) {
   playerClickIndex = cells.indexOf(event.target); // we click on a div, what is the index of the div in the cells array?
   if (event.target.classList.contains("mine")) {
     blowUp(event); // if the div we clicked on contains a mine, reveal the mine
-    setTimeout(gameLost, 1000);
+    setTimeout(gameLost, 500);
   } else if (cells.indexOf(event.target) === 0) {
     // if the cell index = 0
-    console.log(playerClickIndex);
     borderingIndexes = [
       // make a note of the bordering cells, e.g. 1, 8, 9
       playerClickIndex + 1,
@@ -133,7 +143,6 @@ function numberofBorderingMines(event) {
     ];
     numberDisplay(); // then execute the number display function
   } else if (cells.indexOf(event.target) === width - 1) {
-    console.log(playerClickIndex);
     borderingIndexes = [
       playerClickIndex - 1,
       playerClickIndex + width,
@@ -141,7 +150,6 @@ function numberofBorderingMines(event) {
     ];
     numberDisplay();
   } else if (cells.indexOf(event.target) === cellCount - width) {
-    console.log(playerClickIndex);
     borderingIndexes = [
       playerClickIndex + 1,
       playerClickIndex - width,
@@ -149,7 +157,6 @@ function numberofBorderingMines(event) {
     ];
     numberDisplay();
   } else if (cells.indexOf(event.target) === cellCount - 1) {
-    console.log(playerClickIndex);
     borderingIndexes = [
       playerClickIndex - 1,
       playerClickIndex - width,
@@ -157,7 +164,6 @@ function numberofBorderingMines(event) {
     ];
     numberDisplay();
   } else if (cells.indexOf(event.target) < width) {
-    console.log(playerClickIndex);
     borderingIndexes = [
       playerClickIndex - 1,
       playerClickIndex + 1,
@@ -167,7 +173,6 @@ function numberofBorderingMines(event) {
     ];
     numberDisplay();
   } else if (cells.indexOf(event.target) > cellCount - width - 1) {
-    console.log(playerClickIndex);
     borderingIndexes = [
       playerClickIndex - 1,
       playerClickIndex + 1,
@@ -177,7 +182,6 @@ function numberofBorderingMines(event) {
     ];
     numberDisplay();
   } else if (cells.indexOf(event.target) % 8 === 0) {
-    console.log(playerClickIndex);
     borderingIndexes = [
       playerClickIndex + 1,
       playerClickIndex + width,
@@ -187,7 +191,6 @@ function numberofBorderingMines(event) {
     ];
     numberDisplay();
   } else if (cells.indexOf(event.target) % 8 === 7) {
-    console.log(playerClickIndex);
     borderingIndexes = [
       playerClickIndex - 1,
       playerClickIndex + width - 1,
@@ -197,7 +200,6 @@ function numberofBorderingMines(event) {
     ];
     numberDisplay();
   } else {
-    console.log(playerClickIndex);
     borderingIndexes = [
       playerClickIndex - 1,
       playerClickIndex + 1,
@@ -243,17 +245,97 @@ cells.forEach((cell) => cell.addEventListener("contextmenu", placeFlag));
 function gameLost() {
   if (clockisRunning === true) {
     clearInterval(currentTime);
-    window.alert(`Game over`);
+    gameLostPopUpContainer.style.display = "flex";
+    // cells.forEach((cell) => cell.removeEventListener("click", startTimer));
+    // cells.forEach((cell) =>
+    //   cell.removeEventListener("click", numberofBorderingMines)
+    // );
+    // cells.forEach((cell) => cell.removeEventListener("contextmenu", placeFlag));
+  }
+}
+
+function restartGame() {
+  (gameLostPopUpContainer.style.display = "none"), (numberOfFlags = 10);
+  count = 1;
+  numberOfFlags = 10;
+  flagDisplay.innerHTML = numberOfFlags;
+  currentTime = null;
+  updateTimer();
+  clockisRunning = false;
+  cells.forEach((cell) =>
+    cell.classList.remove(
+      "flag",
+      "mine",
+      "checked",
+      "uncovered",
+      "zero",
+      "one",
+      "two",
+      "three",
+      "four",
+      "five"
+    )
+  );
+  mineLocations = [];
+  cells.forEach((cell) => cell.addEventListener("click", startTimer));
+}
+
+playAgainButton.addEventListener("click", restartGame);
+
+// update the styling
+// add a reset button
+// add the win conditions
+const updateHighScore = document.getElementById("highscore");
+
+function gameWon() {
+  if (
+    flagDisplay.innerHTML === "0" &&
+    mineLocations.every((mine) => mine.classList.contains("flag"))
+  ) {
+    cells
+      .filter(
+        (cell) => cell.classList.contains("zero") || cell.classList.length === 0
+      )
+      .forEach((cell) => {
+        cell.classList.remove("zero");
+        cell.classList.add("finished");
+      });
+    clearInterval(currentTime);
+    let playerScore = Number(document.getElementById("timer").innerText);
+    const highScore = localStorage.getItem("highscore");
+    if (!highScore || playerScore < highScore) {
+      localStorage.setItem("highscore", playerScore);
+    }
+    setTimeout(() => {
+      if (playerScore >= highScore) {
+        alert(
+          `Your score was ${playerScore}s but the high score is ${highScore}s`
+        );
+      } else {
+        alert(`New high score! ${playerScore}s`);
+        updateHighScore.innerHTML = playerScore;
+      }
+    }, 50);
+
     cells.forEach((cell) => cell.removeEventListener("click", startTimer));
     cells.forEach((cell) =>
       cell.removeEventListener("click", numberofBorderingMines)
     );
     cells.forEach((cell) => cell.removeEventListener("contextmenu", placeFlag));
+    cells.forEach((cell) => cell.removeEventListener("click", gameWon));
+    cells.forEach((cell) => cell.removeEventListener("contextmenu", gameWon));
   }
 }
 
-// update the styling
-// add a reset button
-// add the win conditions
-// if each cell on the grid is interacted with without invoking the blowUp function,
-// the game is won
+cells.forEach((cell) => cell.addEventListener("click", gameWon));
+cells.forEach((cell) => cell.addEventListener("contextmenu", gameWon));
+
+// none of the mines have been uncovered
+// and all other cells have been checked
+// and the number of flags = 0
+
+// trigger pop up windows
+// one for page load
+// one for win
+// one for loss
+// add reset buttons

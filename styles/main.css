@@ -5,11 +5,31 @@
 
 body {
   height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "roboto", sans-serif;
+  background-image: url("../assets/background.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 h1 {
   text-align: center;
-  margin: 60px auto;
+  margin: 60px auto 10px;
+  font-family: "Homemade Apple", cursive;
+  font-size: 42px;
+  letter-spacing: 3px;
+  color: #193a2a;
+}
+
+.main {
+  background-color: #fcf1ecd3;
+  height: calc(100vh - 60px);
+  border-radius: 8px;
+  width: 70%;
+  max-width: 700px;
 }
 
 .navigation-container {
@@ -17,10 +37,95 @@ h1 {
   justify-content: space-evenly;
   width: 80%;
   margin: 0 auto;
+  margin-bottom: 50px;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.difficulty-level {
+  display: flex;
+  align-items: center;
+}
+
+.popup-container,
+.win-container,
+.lose-container {
+  position: absolute;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: #2e5a3b9a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lose-container.lose,
+.win {
+  height: 50%;
+  width: 50%;
+  padding: 50px;
+  background: #fff;
+  border-radius: 10px;
+  text-align: center;
+  font-family: "Homemade Apple", cursive;
+}
+
+.win-container #butterfly {
+  width: 60%;
+  margin: 10px auto;
+  justify-self: center;
+}
+
+.win-container p {
+  font-family: "roboto", sans-serif;
+  margin-top: 10px;
+}
+
+.lose-container.lose #caterpillar {
+  display: flex;
+  justify-content: center;
+  margin: 20px auto;
+  width: 70%;
+}
+
+.restart {
+  cursor: pointer;
+  font-family: "Homemade Apple", cursive;
+  padding: 10px 20px;
+}
+
+.popup,
+.win {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 50%;
+  width: 50%;
+  padding: 20px;
+  background: #fff;
+  border-radius: 10px;
+}
+
+.popup h2 {
+  margin-bottom: 20px;
+  font-family: "Homemade Apple", cursive;
+  text-align: center;
+}
+
+.popup p {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.popup .close-btn {
+  width: 8%;
+  height: 5%;
+  align-self: flex-end;
+  cursor: pointer;
 }
 
 .grid-wrapper {
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -38,8 +143,8 @@ h1 {
 }
 
 .grid div {
-  border: 1px solid rgb(24, 65, 0);
-  background-color: rgb(167, 227, 167);
+  border: 1px solid #193a2a;
+  background-color: #96c07f;
   flex-grow: 1;
   height: 12.5%;
   width: 12.5%;
@@ -49,19 +154,26 @@ h1 {
   background-image: url("../assets/flag.png");
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 60%;
+  background-size: 70%;
 }
 
 .grid div.mine {
-  border: 1px solid rgb(24, 65, 0);
+  border: 1px solid #193a2a;
 }
 
 .mine.uncovered {
   background-image: url("../assets/mine.png");
   background-repeat: no-repeat;
   background-position: center;
-  background-size: contain;
+  background-size: 70%;
   background-color: rgb(91, 148, 91);
+}
+
+.grid div.finished {
+  background-image: url("https://media2.giphy.com/media/Q9ajBrYQoSzkWPJ8Os/200w.webp");
+  background-position: center;
+  background-size: 70%;
+  background-repeat: no-repeat;
 }
 
 .grid div.zero {
