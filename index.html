@@ -32,7 +32,7 @@
 
         <div class="timer">⏱<span id="timer"> 00</span></div>
 
-        <div class="highscore">🏆<span id="highscore"> 0</span></div>
+        <div class="highscore">🏆<span id="highscore"> 0</span>s</div>
         <button class="open-popup">Instructions</button>
       </div>
       <div class="grid-wrapper">
@@ -46,22 +46,24 @@
         <p>
           Your cabbages are almost ready to harvest!<br />
           <br />
-          But an infestation of caterpillars threatens to eat through your
-          cabbages before you have a chance to pick them!<br />
+          But an infestation of caterpillars threatens to destroy your cabbages
+          before you have a chance to pick them!<br />
           <br />
           Your goal is to use the numbers on the tiles to determine where the
           caterpillars are hiding in the cabbage patch. Right click to place a
-          jar on each infested tile, safely catching the caterpillar. The
-          numbers represent how many bordering tiles contain caterpillars.
-          Bordering means any direction; up, down, right, left and diagonal!
+          jar on each infested tile, safely catching the caterpillar. Each
+          number tells you how many bordering tiles contain caterpillars.
           <br />
           <br />
-          Accidentally click on a caterpillar, and it will munch through your
-          cabbages... meaning game over! <br />
+          If you accidentally click on a caterpillar, it will munch through your
+          cabbages and the game will be over! <br />
           <br />
-          But successfully mark all the caterpillars with jars, and you win the
+          But successfully catch all the caterpillars in jars, and you win the
           game. Your cabbages are safe from hungry bugs and it's time to release
           the caterpillars into the wild!
+        </p>
+        <p id="disclaimer">
+          ~ No caterpillars were harmed in the making of this game ~
         </p>
       </div>
     </div>
@@ -69,16 +71,17 @@
       <div class="win">
         <h2>you won!</h2>
         <p>
-          Your score: <span id="player-score"></span><br />
+          Your score: <span id="player-score"></span>s<br />
           High score:
-          <span id="high-score"></span>
+          <span id="high-score">s</span>
         </p>
         <img id="butterfly" src="./assets/butterfly.gif" alt="butterfly gif" />
-        <p>Time to release your caterpillars into the wild 🐛🦋</p>
+        <p>Time to release your caterpillars into the wild!</p>
+        <button class="restart-win">play again</button>
       </div>
     </div>
     <div class="lose-container">
-      <div class="lose-container lose">
+      <div class="lose">
         <h2>
           game over!
           <img

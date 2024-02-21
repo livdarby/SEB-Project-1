@@ -26,9 +26,13 @@ function createGrid() {
 createGrid();
 
 const playAgainButton = document.querySelector(".restart");
+const playAgainButtonWin = document.querySelector(".restart-win");
 const gameLostPopUpContainer = document.querySelector(".lose-container");
 console.log(gameLostPopUpContainer);
 gameLostPopUpContainer.style.display = "none";
+
+const gameWonPopUpContainer = document.querySelector(".win-container");
+gameWonPopUpContainer.style.display = "none";
 
 const closePopUp = document.querySelector(".close-btn");
 const popUpContainer = document.querySelector(".popup-container");
@@ -255,19 +259,16 @@ function gameLost() {
 }
 
 function restartGame() {
-  (gameLostPopUpContainer.style.display = "none"), (numberOfFlags = 10);
-  count = 1;
-  numberOfFlags = 10;
-  flagDisplay.innerHTML = numberOfFlags;
-  currentTime = null;
-  updateTimer();
   clockisRunning = false;
+  gameLostPopUpContainer.style.display = "none";
+  gameWonPopUpContainer.style.display = "none";
   cells.forEach((cell) =>
     cell.classList.remove(
       "flag",
       "mine",
       "checked",
       "uncovered",
+      "finished",
       "zero",
       "one",
       "two",
@@ -277,6 +278,11 @@ function restartGame() {
     )
   );
   mineLocations = [];
+  count = 1;
+  currentTime = null;
+  updateTimer();
+  numberOfFlags = 10;
+  flagDisplay.innerHTML = numberOfFlags;
   cells.forEach((cell) => cell.addEventListener("click", startTimer));
 }
 
@@ -286,12 +292,15 @@ playAgainButton.addEventListener("click", restartGame);
 // add a reset button
 // add the win conditions
 const updateHighScore = document.getElementById("highscore");
+const yourScoreDisplay = document.getElementById("player-score");
+const highScoreDisplay = document.getElementById("high-score");
 
 function gameWon() {
   if (
     flagDisplay.innerHTML === "0" &&
     mineLocations.every((mine) => mine.classList.contains("flag"))
   ) {
+    clearInterval(currentTime);
     cells
       .filter(
         (cell) => cell.classList.contains("zero") || cell.classList.length === 0
@@ -300,30 +309,27 @@ function gameWon() {
         cell.classList.remove("zero");
         cell.classList.add("finished");
       });
-    clearInterval(currentTime);
-    let playerScore = Number(document.getElementById("timer").innerText);
+    const playerScore = Number(document.getElementById("timer").innerText);
     const highScore = localStorage.getItem("highscore");
+    console.log(
+      `player score is ${playerScore} and high score is ${highScore}`
+    );
     if (!highScore || playerScore < highScore) {
       localStorage.setItem("highscore", playerScore);
+      updateHighScore.innerText = playerScore;
+      yourScoreDisplay.innerText = playerScore;
+      highScoreDisplay.innerText = playerScore;
+    } else {
+      yourScoreDisplay.innerText = playerScore;
+      highScoreDisplay.innerText = highScore;
     }
-    setTimeout(() => {
-      if (playerScore >= highScore) {
-        alert(
-          `Your score was ${playerScore}s but the high score is ${highScore}s`
-        );
-      } else {
-        alert(`New high score! ${playerScore}s`);
-        updateHighScore.innerHTML = playerScore;
-      }
-    }, 50);
-
-    cells.forEach((cell) => cell.removeEventListener("click", startTimer));
-    cells.forEach((cell) =>
-      cell.removeEventListener("click", numberofBorderingMines)
+    setTimeout(
+      (winPopup = () => {
+        gameWonPopUpContainer.style.display = "";
+      }),
+      2000
     );
-    cells.forEach((cell) => cell.removeEventListener("contextmenu", placeFlag));
-    cells.forEach((cell) => cell.removeEventListener("click", gameWon));
-    cells.forEach((cell) => cell.removeEventListener("contextmenu", gameWon));
+    playAgainButtonWin.addEventListener("click", restartGame);
   }
 }
 
