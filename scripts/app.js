@@ -1,8 +1,8 @@
 const grid = document.querySelector(".grid");
 
-const width = 8;
-const cellCount = width * width;
-const cells = [];
+let width = 8;
+let cellCount = width * width;
+let cells = [];
 let clockisRunning = false;
 let numberOfFlags = 10;
 let firstMoveIndex = null;
@@ -10,16 +10,149 @@ let mineLocations = [];
 let borderingIndexes = null;
 let borderingCellsContainingMines = null;
 let playerClickIndex = null;
+let numberOfMines = 10;
 
 const flagDisplay = document.getElementById("flags");
 flagDisplay.innerHTML = numberOfFlags;
 
+const difficultyDropdown = document.getElementById("difficulty");
+difficultyDropdown.addEventListener("change", difficultyLevel);
+
+function difficultyLevel() {
+  const selectedDifficulty = this.options[this.selectedIndex].text;
+  if (selectedDifficulty === "Easy") {
+    clearInterval(currentTime);
+    cells = [];
+    grid.innerHTML = "";
+    width = 8;
+    cellCount = width * width;
+    createGrid();
+    clockisRunning = false;
+    cells.forEach((cell) =>
+      cell.classList.remove(
+        "flag",
+        "mine",
+        "checked",
+        "uncovered",
+        "finished",
+        "zero",
+        "one",
+        "two",
+        "three",
+        "four",
+        "five"
+      )
+    );
+    mineLocations = [];
+    count = 1;
+    currentTime = null;
+    updateTimer();
+    numberOfFlags = 10;
+    numberOfMines = 10;
+    flagDisplay.innerHTML = numberOfFlags;
+    cells.forEach((cell) => cell.addEventListener("click", startTimer));
+    cells.forEach((cell) =>
+      cell.addEventListener("click", numberofBorderingMines)
+    );
+    cells.forEach((cell) => cell.addEventListener("contextmenu", placeFlag));
+    cells.forEach((cell) => cell.addEventListener("click", gameWon));
+    cells.forEach((cell) => cell.addEventListener("contextmenu", gameWon));
+  } else if (selectedDifficulty === "Medium") {
+    clearInterval(currentTime);
+    cells = [];
+    grid.innerHTML = "";
+    width = 12;
+    cellCount = width * width;
+    createGrid();
+    clockisRunning = false;
+    cells.forEach((cell) =>
+      cell.classList.remove(
+        "flag",
+        "mine",
+        "checked",
+        "uncovered",
+        "finished",
+        "zero",
+        "one",
+        "two",
+        "three",
+        "four",
+        "five"
+      )
+    );
+    mineLocations = [];
+    count = 1;
+    currentTime = null;
+    updateTimer();
+    numberOfFlags = 22;
+    numberOfMines = 22;
+    flagDisplay.innerHTML = numberOfFlags;
+    cells.forEach((cell) => cell.addEventListener("click", startTimer));
+    cells.forEach((cell) =>
+      cell.addEventListener("click", numberofBorderingMines)
+    );
+    cells.forEach((cell) => cell.addEventListener("contextmenu", placeFlag));
+    cells.forEach((cell) => cell.addEventListener("click", gameWon));
+    cells.forEach((cell) => cell.addEventListener("contextmenu", gameWon));
+  }
+  if (selectedDifficulty === "Hard") {
+    clearInterval(currentTime);
+    cells = [];
+    grid.innerHTML = "";
+    width = 16;
+    cellCount = width * width;
+    createGrid();
+    clockisRunning = false;
+    cells.forEach((cell) =>
+      cell.classList.remove(
+        "flag",
+        "mine",
+        "checked",
+        "uncovered",
+        "finished",
+        "zero",
+        "one",
+        "two",
+        "three",
+        "four",
+        "five"
+      )
+    );
+    mineLocations = [];
+    count = 1;
+    currentTime = null;
+    updateTimer();
+    numberOfFlags = 52;
+    numberOfMines = 52;
+    flagDisplay.innerHTML = numberOfFlags;
+    cells.forEach((cell) => cell.addEventListener("click", startTimer));
+    cells.forEach((cell) =>
+      cell.addEventListener("click", numberofBorderingMines)
+    );
+    cells.forEach((cell) => cell.addEventListener("contextmenu", placeFlag));
+    cells.forEach((cell) => cell.addEventListener("click", gameWon));
+    cells.forEach((cell) => cell.addEventListener("contextmenu", gameWon));
+  }
+}
+
 function createGrid() {
   for (let i = 0; i < cellCount; i++) {
     const cell = document.createElement("div");
-    // cell.innerText = i;
     grid.appendChild(cell);
     cells.push(cell);
+    if (width === 12) {
+      const gridCells = document.querySelectorAll(".grid div");
+      gridCells.forEach((cell) => {
+        cell.style.height = "8.3%";
+        cell.style.width = "8.3%";
+      });
+    } else if (width === 16) {
+      const gridCells = document.querySelectorAll(".grid div");
+      gridCells.forEach((cell) => {
+        cell.style.height = "6.25%";
+        cell.style.width = "6.25%";
+      });
+    }
   }
 }
 
@@ -28,7 +161,6 @@ createGrid();
 const playAgainButton = document.querySelector(".restart");
 const playAgainButtonWin = document.querySelector(".restart-win");
 const gameLostPopUpContainer = document.querySelector(".lose-container");
-console.log(gameLostPopUpContainer);
 gameLostPopUpContainer.style.display = "none";
 
 const gameWonPopUpContainer = document.querySelector(".win-container");
@@ -76,7 +208,7 @@ cells.forEach((cell) => cell.addEventListener("click", startTimer));
 // These will be the indeces of the mines in the cell array
 
 function mineDistribution() {
-  while (mineLocations.length < 10) {
+  while (mineLocations.length < numberOfMines) {
     let num = Math.floor(Math.random() * (cellCount - 1));
     if (num === firstMoveIndex || mineLocations.includes(cells[num])) {
       mineDistribution();
@@ -185,7 +317,7 @@ function numberofBorderingMines(event) {
       playerClickIndex - width + 1,
     ];
     numberDisplay();
-  } else if (cells.indexOf(event.target) % 8 === 0) {
+  } else if (cells.indexOf(event.target) % width === 0) {
     borderingIndexes = [
       playerClickIndex + 1,
       playerClickIndex + width,
@@ -194,7 +326,7 @@ function numberofBorderingMines(event) {
       playerClickIndex - width + 1,
     ];
     numberDisplay();
-  } else if (cells.indexOf(event.target) % 8 === 7) {
+  } else if (cells.indexOf(event.target) % width === width - 1) {
     borderingIndexes = [
       playerClickIndex - 1,
       playerClickIndex + width - 1,
@@ -281,7 +413,13 @@ function restartGame() {
   count = 1;
   currentTime = null;
   updateTimer();
-  numberOfFlags = 10;
+  if (width === 8) {
+    numberOfFlags = 10;
+  } else if (width === 16) {
+    numberOfFlags = 52;
+  } else if (width === 12) {
+    numberOfFlags = 22;
+  }
   flagDisplay.innerHTML = numberOfFlags;
   cells.forEach((cell) => cell.addEventListener("click", startTimer));
 }
@@ -311,9 +449,6 @@ function gameWon() {
       });
     const playerScore = Number(document.getElementById("timer").innerText);
     const highScore = localStorage.getItem("highscore");
-    console.log(
-      `player score is ${playerScore} and high score is ${highScore}`
-    );
     if (!highScore || playerScore < highScore) {
       localStorage.setItem("highscore", playerScore);
       updateHighScore.innerText = playerScore;
