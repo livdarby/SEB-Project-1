@@ -6,6 +6,7 @@
     <title>Minesweeper</title>
     <link rel="stylesheet" href="./styles/main.css" />
     <script defer src="./scripts/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -69,7 +70,14 @@
     </div>
     <div class="win-container">
       <div class="win">
-        <h2>you won!</h2>
+        <h2>
+          you won!<img
+            id="gold"
+            src="./assets/high-score.png"
+            alt="New high score sticker"
+          />
+        </h2>
+
         <p>
           Your score: <span id="player-score"></span>s<br />
           High score:
@@ -93,5 +101,9 @@
         </h2>
       </div>
     </div>
+    <audio id="crunch" src="./assets/eating-sound-effect-36186.mp3"></audio>
+    <audio id="birds" src="./assets/birds-19624.mp3"></audio>
+    <audio id="confetti" src="./assets/explosion-46566.mp3"></audio>
+    <audio id="yay" src="./assets/yipee-45360.mp3"></audio>
   </body>
 </html>

@@ -12,6 +12,13 @@ let borderingCellsContainingMines = null;
 let playerClickIndex = null;
 let numberOfMines = 10;
 
+const backgroundAudio = document.getElementById("birds");
+const crunchAudio = document.getElementById("crunch");
+const confettiAudio = document.getElementById("confetti");
+const yippeeAudio = document.getElementById("yay");
+backgroundAudio.loop = true;
+backgroundAudio.play();
+
 const flagDisplay = document.getElementById("flags");
 flagDisplay.innerHTML = numberOfFlags;
 
@@ -165,6 +172,8 @@ gameLostPopUpContainer.style.display = "none";
 
 const gameWonPopUpContainer = document.querySelector(".win-container");
 gameWonPopUpContainer.style.display = "none";
+const newHighScore = document.getElementById("gold");
+newHighScore.style.display = "none";
 
 const closePopUp = document.querySelector(".close-btn");
 const popUpContainer = document.querySelector(".popup-container");
@@ -255,6 +264,8 @@ function numberDisplay() {
     cells[playerClickIndex].classList.add("three");
   } else if (borderingCellsContainingMines.length === 4) {
     cells[playerClickIndex].classList.add("four");
+  } else if (borderingCellsContainingMines.length === 5) {
+    cells[playerClickIndex].classList.add("five");
   }
   // give the cell the class list that is equal to the number of bordering mines
   // e.g. two bordering cells that contain mines? assign class list 'two'
@@ -262,6 +273,7 @@ function numberDisplay() {
 
 function blowUp(event) {
   event.target.classList.add("uncovered");
+  crunchAudio.play();
 }
 
 function numberofBorderingMines(event) {
@@ -392,6 +404,7 @@ function gameLost() {
 
 function restartGame() {
   clockisRunning = false;
+  clearInterval(currentTime);
   gameLostPopUpContainer.style.display = "none";
   gameWonPopUpContainer.style.display = "none";
   cells.forEach((cell) =>
@@ -430,6 +443,7 @@ playAgainButton.addEventListener("click", restartGame);
 // add a reset button
 // add the win conditions
 const updateHighScore = document.getElementById("highscore");
+updateHighScore.innerText = localStorage.getItem("highscore");
 const yourScoreDisplay = document.getElementById("player-score");
 const highScoreDisplay = document.getElementById("high-score");
 
@@ -449,7 +463,21 @@ function gameWon() {
       });
     const playerScore = Number(document.getElementById("timer").innerText);
     const highScore = localStorage.getItem("highscore");
+    yippeeAudio.play();
     if (!highScore || playerScore < highScore) {
+      setTimeout(
+        () =>
+          confetti(
+            {
+              particleCount: 100,
+              spread: 70,
+              origin: { y: 0.6 },
+            },
+            confettiAudio.play()
+          ),
+        2100
+      );
+      newHighScore.style.display = "";
       localStorage.setItem("highscore", playerScore);
       updateHighScore.innerText = playerScore;
       yourScoreDisplay.innerText = playerScore;
@@ -457,6 +485,7 @@ function gameWon() {
     } else {
       yourScoreDisplay.innerText = playerScore;
       highScoreDisplay.innerText = highScore;
+      yippeeAudio.play();
     }
     setTimeout(
       (winPopup = () => {
