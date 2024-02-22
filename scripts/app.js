@@ -25,120 +25,61 @@ flagDisplay.innerHTML = numberOfFlags;
 const difficultyDropdown = document.getElementById("difficulty");
 difficultyDropdown.addEventListener("change", difficultyLevel);
 
+function resetConditions() {
+  clearInterval(currentTime);
+  cells = [];
+  grid.innerHTML = "";
+  cellCount = width * width;
+  createGrid();
+  clockisRunning = false;
+  cells.forEach((cell) =>
+    cell.classList.remove(
+      "flag",
+      "mine",
+      "checked",
+      "uncovered",
+      "finished",
+      "zero",
+      "one",
+      "two",
+      "three",
+      "four",
+      "five"
+    )
+  );
+  mineLocations = [];
+  count = 1;
+  currentTime = null;
+  updateTimer();
+  flagDisplay.innerHTML = numberOfFlags;
+  cells.forEach((cell) => cell.addEventListener("click", startTimer));
+  cells.forEach((cell) =>
+    cell.addEventListener("click", numberofBorderingMines)
+  );
+  cells.forEach((cell) => cell.addEventListener("contextmenu", placeFlag));
+  cells.forEach((cell) => cell.addEventListener("click", gameWon));
+  cells.forEach((cell) => cell.addEventListener("contextmenu", gameWon));
+}
+
 function difficultyLevel() {
   const selectedDifficulty = this.options[this.selectedIndex].text;
   if (selectedDifficulty === "Easy") {
-    clearInterval(currentTime);
-    cells = [];
-    grid.innerHTML = "";
     width = 8;
-    cellCount = width * width;
-    createGrid();
-    clockisRunning = false;
-    cells.forEach((cell) =>
-      cell.classList.remove(
-        "flag",
-        "mine",
-        "checked",
-        "uncovered",
-        "finished",
-        "zero",
-        "one",
-        "two",
-        "three",
-        "four",
-        "five"
-      )
-    );
-    mineLocations = [];
-    count = 1;
-    currentTime = null;
-    updateTimer();
+
     numberOfFlags = 10;
     numberOfMines = 10;
-    flagDisplay.innerHTML = numberOfFlags;
-    cells.forEach((cell) => cell.addEventListener("click", startTimer));
-    cells.forEach((cell) =>
-      cell.addEventListener("click", numberofBorderingMines)
-    );
-    cells.forEach((cell) => cell.addEventListener("contextmenu", placeFlag));
-    cells.forEach((cell) => cell.addEventListener("click", gameWon));
-    cells.forEach((cell) => cell.addEventListener("contextmenu", gameWon));
+    resetConditions();
   } else if (selectedDifficulty === "Medium") {
-    clearInterval(currentTime);
-    cells = [];
-    grid.innerHTML = "";
     width = 12;
-    cellCount = width * width;
-    createGrid();
-    clockisRunning = false;
-    cells.forEach((cell) =>
-      cell.classList.remove(
-        "flag",
-        "mine",
-        "checked",
-        "uncovered",
-        "finished",
-        "zero",
-        "one",
-        "two",
-        "three",
-        "four",
-        "five"
-      )
-    );
-    mineLocations = [];
-    count = 1;
-    currentTime = null;
-    updateTimer();
     numberOfFlags = 22;
     numberOfMines = 22;
-    flagDisplay.innerHTML = numberOfFlags;
-    cells.forEach((cell) => cell.addEventListener("click", startTimer));
-    cells.forEach((cell) =>
-      cell.addEventListener("click", numberofBorderingMines)
-    );
-    cells.forEach((cell) => cell.addEventListener("contextmenu", placeFlag));
-    cells.forEach((cell) => cell.addEventListener("click", gameWon));
-    cells.forEach((cell) => cell.addEventListener("contextmenu", gameWon));
+    resetConditions();
   }
   if (selectedDifficulty === "Hard") {
-    clearInterval(currentTime);
-    cells = [];
-    grid.innerHTML = "";
     width = 16;
-    cellCount = width * width;
-    createGrid();
-    clockisRunning = false;
-    cells.forEach((cell) =>
-      cell.classList.remove(
-        "flag",
-        "mine",
-        "checked",
-        "uncovered",
-        "finished",
-        "zero",
-        "one",
-        "two",
-        "three",
-        "four",
-        "five"
-      )
-    );
-    mineLocations = [];
-    count = 1;
-    currentTime = null;
-    updateTimer();
     numberOfFlags = 52;
     numberOfMines = 52;
-    flagDisplay.innerHTML = numberOfFlags;
-    cells.forEach((cell) => cell.addEventListener("click", startTimer));
-    cells.forEach((cell) =>
-      cell.addEventListener("click", numberofBorderingMines)
-    );
-    cells.forEach((cell) => cell.addEventListener("contextmenu", placeFlag));
-    cells.forEach((cell) => cell.addEventListener("click", gameWon));
-    cells.forEach((cell) => cell.addEventListener("contextmenu", gameWon));
+    resetConditions();
   }
 }
 
@@ -177,17 +118,21 @@ newHighScore.style.display = "none";
 
 const closePopUp = document.querySelector(".close-btn");
 const popUpContainer = document.querySelector(".popup-container");
+
+// On page load, display the game instructions -------------------------------
+
 function instructions() {
   popUpContainer.style.display = "";
   closePopUp.addEventListener("click", function () {
     popUpContainer.style.display = "none";
   });
 }
+
 window.addEventListener("load", instructions);
 const instructionsButton = document.querySelector(".open-popup");
 instructionsButton.addEventListener("click", instructions);
 
-// Stop watch timer below ------------------------------------
+// Timer function below ------------------------------------
 
 const timeDisplay = document.getElementById("timer");
 let currentTime = null;
@@ -197,7 +142,8 @@ function updateTimer() {
   timeDisplay.innerHTML = currentTime++;
 }
 
-// Stop watch will only start once! --------------------------
+// Make sure the timer can only start once per game. The first click starts the timer
+// and will never be a mine i.e. will never end the game on first click. --------------------------
 function startTimer(event) {
   if (clockisRunning === false) {
     currentTime = setInterval(() => {
@@ -212,8 +158,8 @@ function startTimer(event) {
 
 cells.forEach((cell) => cell.addEventListener("click", startTimer));
 
-// Randomly distribute 10 mines ----------------------------
-// Generate 10 random numbers from 0 - 63 (excluding firstMoveIndex)
+// Randomly distribute x mines ----------------------------
+// Generate x random numbers from 0 - count (excluding the firstMoveIndex)
 // These will be the indeces of the mines in the cell array
 
 function mineDistribution() {
@@ -240,12 +186,9 @@ function mineDistribution() {
 
 function numberDisplay() {
   // e.g. 1, 8, 9
-  // filter the array of index to
   borderingCellsContainingMines = borderingIndexes
-    // .filter((index) => index >= 0 && index < cells.length)
     .map((index) => cells[index]) // change the indexes into the element in the cells array i.e. 1 become cells[1] = div
     .filter((cell) => cell.classList.contains("mine")); // filter the array to contain only divs with the mine class list
-  // an array of bordering cells that do not contain mines
   if (borderingCellsContainingMines.length === 0) {
     cells[playerClickIndex].classList.add("zero");
     borderingIndexes.forEach((index) => {
@@ -284,7 +227,7 @@ function numberofBorderingMines(event) {
   } else if (cells.indexOf(event.target) === 0) {
     // if the cell index = 0
     borderingIndexes = [
-      // make a note of the bordering cells, e.g. 1, 8, 9
+      // create an array of the bordering cells indexes, e.g. 1, 8, 9
       playerClickIndex + 1,
       playerClickIndex + width,
       playerClickIndex + width + 1,
@@ -403,29 +346,8 @@ function gameLost() {
 }
 
 function restartGame() {
-  clockisRunning = false;
-  clearInterval(currentTime);
   gameLostPopUpContainer.style.display = "none";
   gameWonPopUpContainer.style.display = "none";
-  cells.forEach((cell) =>
-    cell.classList.remove(
-      "flag",
-      "mine",
-      "checked",
-      "uncovered",
-      "finished",
-      "zero",
-      "one",
-      "two",
-      "three",
-      "four",
-      "five"
-    )
-  );
-  mineLocations = [];
-  count = 1;
-  currentTime = null;
-  updateTimer();
   if (width === 8) {
     numberOfFlags = 10;
   } else if (width === 16) {
@@ -434,14 +356,11 @@ function restartGame() {
     numberOfFlags = 22;
   }
   flagDisplay.innerHTML = numberOfFlags;
-  cells.forEach((cell) => cell.addEventListener("click", startTimer));
+  resetConditions();
 }
 
 playAgainButton.addEventListener("click", restartGame);
 
-// update the styling
-// add a reset button
-// add the win conditions
 const updateHighScore = document.getElementById("highscore");
 updateHighScore.innerText = localStorage.getItem("highscore");
 const yourScoreDisplay = document.getElementById("player-score");
@@ -464,6 +383,7 @@ function gameWon() {
     const playerScore = Number(document.getElementById("timer").innerText);
     const highScore = localStorage.getItem("highscore");
     yippeeAudio.play();
+    yourScoreDisplay.innerText = playerScore;
     if (!highScore || playerScore < highScore) {
       setTimeout(
         () =>
@@ -473,6 +393,7 @@ function gameWon() {
               spread: 70,
               origin: { y: 0.6 },
             },
+            // original code from github.com/catdad/canvas-confetti ------------------ //
             confettiAudio.play()
           ),
         2100
@@ -480,10 +401,8 @@ function gameWon() {
       newHighScore.style.display = "";
       localStorage.setItem("highscore", playerScore);
       updateHighScore.innerText = playerScore;
-      yourScoreDisplay.innerText = playerScore;
       highScoreDisplay.innerText = playerScore;
     } else {
-      yourScoreDisplay.innerText = playerScore;
       highScoreDisplay.innerText = highScore;
       yippeeAudio.play();
     }
@@ -499,13 +418,3 @@ function gameWon() {
 
 cells.forEach((cell) => cell.addEventListener("click", gameWon));
 cells.forEach((cell) => cell.addEventListener("contextmenu", gameWon));
-
-// none of the mines have been uncovered
-// and all other cells have been checked
-// and the number of flags = 0
-
-// trigger pop up windows
-// one for page load
-// one for win
-// one for loss
-// add reset buttons

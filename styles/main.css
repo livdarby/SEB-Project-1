@@ -32,6 +32,8 @@ h1 {
   max-width: 700px;
 }
 
+/* navigation section ---------------------------------------- */
+
 .navigation-container {
   display: flex;
   justify-content: space-evenly;
@@ -46,6 +48,8 @@ h1 {
   display: flex;
   align-items: center;
 }
+
+/* Pop up styling: instructions, game won and game lost --------- */
 
 .popup-container,
 .win-container,
@@ -172,6 +176,8 @@ h1 {
   margin-right: 10px;
 }
 
+/* grid styling ------------------------------------------- */
+
 .grid-wrapper {
   display: flex;
   justify-content: center;
@@ -268,10 +274,12 @@ h1 {
   background-size: 50%;
 }
 
+/* reduce grid size on smaller screens --------------------------------- */
+
 @media screen and (max-width: 1500px) {
   .grid {
-    max-height: 400px; /* Adjust the height for smaller screens */
-    max-width: 400px; /* Adjust the width for smaller screens */
+    max-height: 400px;
+    max-width: 400px;
   }
 
   .navigation-container {
