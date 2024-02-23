@@ -11,13 +11,34 @@ let borderingIndexes = null;
 let borderingCellsContainingMines = null;
 let playerClickIndex = null;
 let numberOfMines = 10;
+let audioPlaying = true;
 
 const backgroundAudio = document.getElementById("birds");
 const crunchAudio = document.getElementById("crunch");
 const confettiAudio = document.getElementById("confetti");
 const yippeeAudio = document.getElementById("yay");
+const muteButton = document.querySelector(".mute");
+let audioElements = [backgroundAudio, crunchAudio, confettiAudio, yippeeAudio];
+
+function playAudio() {
+  backgroundAudio.play();
+}
 backgroundAudio.loop = true;
-backgroundAudio.play();
+window.addEventListener("load", playAudio);
+
+function muteAudio() {
+  if (audioPlaying === true) {
+    backgroundAudio.pause();
+    muteButton.innerHTML = "🔇";
+    audioPlaying = false;
+  } else {
+    backgroundAudio.play();
+    audioPlaying = true;
+    muteButton.innerHTML = "🔊";
+  }
+}
+
+muteButton.addEventListener("click", muteAudio);
 
 const flagDisplay = document.getElementById("flags");
 flagDisplay.innerHTML = numberOfFlags;
@@ -216,7 +237,9 @@ function numberDisplay() {
 
 function blowUp(event) {
   event.target.classList.add("uncovered");
-  crunchAudio.play();
+  if (audioPlaying === true) {
+    crunchAudio.play();
+  }
 }
 
 function numberofBorderingMines(event) {
@@ -382,23 +405,22 @@ function gameWon() {
       });
     const playerScore = Number(document.getElementById("timer").innerText);
     const highScore = localStorage.getItem("highscore");
-    yippeeAudio.play();
+    if (audioPlaying === true) {
+      yippeeAudio.play();
+    }
     yourScoreDisplay.innerText = playerScore;
     newHighScore.style.display = "";
     if (!highScore || playerScore < highScore) {
-      setTimeout(
-        () =>
-          confetti(
-            {
-              particleCount: 100,
-              spread: 70,
-              origin: { y: 0.6 },
-            },
-            // original code from github.com/catdad/canvas-confetti ------------------ //
-            confettiAudio.play()
-          ),
-        2100
-      );
+      setTimeout(() => {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+        if (audioPlaying === true) {
+          confettiAudio.play();
+        }
+      }, 2100);
       newHighScore.style.display = "";
       localStorage.setItem("highscore", playerScore);
       updateHighScore.innerText = playerScore;

@@ -49,6 +49,33 @@ h1 {
   align-items: center;
 }
 
+select {
+  cursor: pointer;
+}
+
+.mute {
+  border: none;
+  background-color: #fcf1ec00;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  scale: 1.8;
+  display: flex;
+  align-items: flex-start;
+}
+
+.mute:hover {
+  scale: 2;
+}
+
+.open-popup {
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.open-popup:hover {
+  color: #193a2a;
+}
+
 /* Pop up styling: instructions, game won and game lost --------- */
 
 .popup-container,
@@ -136,10 +163,6 @@ h1 {
   padding: 10px 20px;
   width: 150px;
   margin: 20px auto;
-}
-
-.open-popup {
-  cursor: pointer;
 }
 
 .popup {
