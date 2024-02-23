@@ -91,8 +91,8 @@ function createGrid() {
     if (width === 12) {
       const gridCells = document.querySelectorAll(".grid div");
       gridCells.forEach((cell) => {
-        cell.style.height = "8.3%";
-        cell.style.width = "8.3%";
+        cell.style.height = "8.333%";
+        cell.style.width = "8.333%";
       });
     } else if (width === 16) {
       const gridCells = document.querySelectorAll(".grid div");
@@ -384,6 +384,7 @@ function gameWon() {
     const highScore = localStorage.getItem("highscore");
     yippeeAudio.play();
     yourScoreDisplay.innerText = playerScore;
+    newHighScore.style.display = "";
     if (!highScore || playerScore < highScore) {
       setTimeout(
         () =>
@@ -405,6 +406,7 @@ function gameWon() {
     } else {
       highScoreDisplay.innerText = highScore;
       yippeeAudio.play();
+      newHighScore.style.display = "none";
     }
     setTimeout(
       (winPopup = () => {
