@@ -31,11 +31,14 @@ function playAudio() {
     audioPlaying = false;
   }
 }
-playAudio();
+window.addEventListener("load", playAudio);
 
 function muteAudio() {
   if (audioPlaying === true) {
     backgroundAudio.pause();
+    yippeeAudio.pause();
+    confettiAudio.pause();
+    crunchAudio.pause();
     muteButton.innerHTML = "🔇";
     audioPlaying = false;
   } else {
@@ -237,6 +240,12 @@ function numberDisplay() {
     cells[playerClickIndex].classList.add("four");
   } else if (borderingCellsContainingMines.length === 5) {
     cells[playerClickIndex].classList.add("five");
+  } else if (borderingCellsContainingMines.length === 6) {
+    cells[playerClickIndex].classList.add("six");
+  } else if (borderingCellsContainingMines.length === 7) {
+    cells[playerClickIndex].classList.add("seven");
+  } else if (borderingCellsContainingMines.length === 8) {
+    cells[playerClickIndex].classList.add("eight");
   }
   // give the cell the class list that is equal to the number of bordering mines
   // e.g. two bordering cells that contain mines? assign class list 'two'
@@ -434,7 +443,9 @@ function gameWon() {
       highScoreDisplay.innerText = playerScore;
     } else {
       highScoreDisplay.innerText = highScore;
-      yippeeAudio.play();
+      if (audioPlaying === true) {
+        yippeeAudio.play();
+      }
       newHighScore.style.display = "none";
     }
     setTimeout(

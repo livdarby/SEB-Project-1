@@ -297,6 +297,30 @@ select {
   background-size: 50%;
 }
 
+.grid div.six {
+  background-color: rgb(103, 145, 108);
+  background-image: url("../assets/six.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+}
+
+.grid div.seven {
+  background-color: rgb(103, 145, 108);
+  background-image: url("../assets/seven.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+}
+
+.grid div.eight {
+  background-color: rgb(103, 145, 108);
+  background-image: url("../assets/eight.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+}
+
 /* reduce grid size on smaller screens --------------------------------- */
 
 @media screen and (max-width: 1500px) {
