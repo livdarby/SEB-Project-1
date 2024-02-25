@@ -18,13 +18,20 @@ const crunchAudio = document.getElementById("crunch");
 const confettiAudio = document.getElementById("confetti");
 const yippeeAudio = document.getElementById("yay");
 const muteButton = document.querySelector(".mute");
-let audioElements = [backgroundAudio, crunchAudio, confettiAudio, yippeeAudio];
 
 function playAudio() {
-  backgroundAudio.play();
+  if (audioPlaying === true) {
+    backgroundAudio.play();
+    backgroundAudio.loop = true;
+    audioPlaying = true;
+  } else {
+    backgroundAudio.pause();
+    yippeeAudio.pause();
+    confettiAudio.pause(), crunchAudio.pause();
+    audioPlaying = false;
+  }
 }
-backgroundAudio.loop = true;
-window.addEventListener("load", playAudio);
+playAudio();
 
 function muteAudio() {
   if (audioPlaying === true) {
@@ -239,7 +246,7 @@ function blowUp(event) {
   event.target.classList.add("uncovered");
   if (audioPlaying === true) {
     crunchAudio.play();
-  }
+  } else crunchAudio.pause();
 }
 
 function numberofBorderingMines(event) {
@@ -407,7 +414,7 @@ function gameWon() {
     const highScore = localStorage.getItem("highscore");
     if (audioPlaying === true) {
       yippeeAudio.play();
-    }
+    } else yippeeAudio.pause();
     yourScoreDisplay.innerText = playerScore;
     newHighScore.style.display = "";
     if (!highScore || playerScore < highScore) {
@@ -419,7 +426,7 @@ function gameWon() {
         });
         if (audioPlaying === true) {
           confettiAudio.play();
-        }
+        } else confettiAudio.pause();
       }, 2100);
       newHighScore.style.display = "";
       localStorage.setItem("highscore", playerScore);
