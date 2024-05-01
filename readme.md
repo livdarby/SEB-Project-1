@@ -6,13 +6,14 @@
 
 Cabbage Patch Protector uses the same logic priniciples as the original Minesweeper game.
 
-## Installation Instruction
+## Installation Instructions
 
-To download and edit the game on your local machine:
-
+To download this code to your local machine use:
 ```
 git clone git@github.com:livdarby/SEB-Project-1.git
 ```
+
+Navigate to the index.html and open with Live Server.
 
 ## Technologies Used
 
